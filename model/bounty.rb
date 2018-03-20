@@ -1,0 +1,57 @@
+require('pg')
+class Bounty
+
+  attr_reader :id, :name, :species, :bounty_value, :homeworld
+
+  def initialize(objects)
+    @id = objects['id']
+    @name = objects['name']
+    @species = objects['species']
+    @bounty_value = objects['bounty_value']
+    @homeworld = objects['homeworld']
+  end
+
+  def save()
+    db = PG.connect({dbname:'bounty_hunter', host:'localhost'})
+    sql = "INSERT INTO bounties (name,species,bounty_value,homeworld) VALUES ($1,$2,$3,$4);"
+    values = [@name,@species,@bounty_value,@homeworld]
+    db.prepare('save',sql)
+    db.exec_prepared('save',values)
+    db.close()
+  end
+
+  def update()
+    db = PG.connect({dbname:'bounty_hunter', host:'localhost'})
+    sql = "UPDATE bounties SET (name,species,bounty_value,homeworld)=($1,$2,$3,$4) WHERE id=$5;"
+    values = [@name,@species,@bounty_value,@homeworld,@id]
+    db.prepare('update',sql)
+    db.exec_prepared('update',values)
+    db.close()
+  end
+
+  def delete()
+    db = PG.connect({dbname:'bounty_hunter', host:'localhost'})
+    sql = "DELETE FROM bounties WHERE id=$1;"
+    value = [@id]
+    db.prepare('delete',sql)
+    db.exec_prepared('delete',value)
+    db.close()
+  end
+
+  def Bounty.find_by_name(name_to_find)
+    db = PG.connect({dbname:'bounty_hunter',host:'localhost'})
+    sql = "SELECT FROM bounty_hunter WHERE name = $1;"
+    value = [name_to_find]
+    db.prepare('find_by_name',sql)
+    object = db.exec_prepared('find_by_name',value)
+    db.close()
+    return bountie_objects = object.map{|hash| Bounty.new(hash)} if bountie_objects.length > 0
+    return nil
+  end
+
+  def Bounty.find(id_to_check)
+    
+  end
+
+
+end
