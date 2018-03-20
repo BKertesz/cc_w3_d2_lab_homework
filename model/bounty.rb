@@ -1,7 +1,7 @@
 require('pg')
 class Bounty
 
-  attr_reader :id, :name, :species, :bounty_value, :homeworld
+  attr_accessor :id, :name, :species, :bounty_value, :homeworld
 
   def initialize(objects)
     @id = objects['id']
@@ -40,7 +40,7 @@ class Bounty
 
   def Bounty.find_by_name(name_to_find)
     db = PG.connect({dbname:'bounty_hunter',host:'localhost'})
-    sql = "SELECT FROM bounty_hunter WHERE name = $1;"
+    sql = "SELECT FROM bounties WHERE name = $1;"
     value = [name_to_find]
     db.prepare('find_by_name',sql)
     object = db.exec_prepared('find_by_name',value)
@@ -49,8 +49,24 @@ class Bounty
     return nil
   end
 
-  def Bounty.find(id_to_check)
-    
+  def Bounty.find(id_to_find)
+    db = PG.connect({dbname:'bounty_hunter',host:'localhost'})
+    sql = "SELECT FROM bounties WHERE id = $1;"
+    value = [id_to_find]
+    db.prepare('find_by_id',sql)
+    object = db.exec_prepared('find_by_id',value)
+    db.close()
+    return Bounty.new(object)
+  end
+
+  def Bounty.load
+    db = PG.connect({dbname:'bounty_hunter',host:'localhost'})
+    sql = "SELECT * FROM bounties ORDER BY id;"
+    db.prepare('load',sql)
+    hashes = db.exec_prepared('load')
+    db.close()
+    return all_bounties = hashes.map{|x| Bounty.new(x)}
+
   end
 
 
