@@ -18,6 +18,15 @@ all_bounties = Bounty.load
 # test_update.update()
 # test_delete = all_bounties.first
 # test_delete.delete
+
+# zorg = Bounty.find_by_name("Zorg")
+# p zorg
+# test_id_find = Bounty.find('3')
+# item =  Bounty.find('3')
+# # binding.pry
+# p item
+
+
 puts ""
 all_bounties = Bounty.load
 puts "All Entries:"

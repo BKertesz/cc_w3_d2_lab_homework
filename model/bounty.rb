@@ -1,4 +1,5 @@
 require('pg')
+require 'pry'
 class Bounty
 
   attr_accessor :id, :name, :species, :bounty_value, :homeworld
@@ -45,18 +46,21 @@ class Bounty
     db.prepare('find_by_name',sql)
     object = db.exec_prepared('find_by_name',value)
     db.close()
-    return bountie_objects = object.map{|hash| Bounty.new(hash)} if bountie_objects.length > 0
+    bountie_objects = object.map{|hash| Bounty.new(hash)}
+    return bountie_objects if bountie_objects.length > 0
     return nil
   end
 
   def Bounty.find(id_to_find)
+    # binding.pry
     db = PG.connect({dbname:'bounty_hunter',host:'localhost'})
-    sql = "SELECT FROM bounties WHERE id = $1;"
-    value = [id_to_find]
+    sql = "SELECT * FROM bounties WHERE id = $1;"
+    value = [id_to_find.to_i]
     db.prepare('find_by_id',sql)
     object = db.exec_prepared('find_by_id',value)
     db.close()
-    return Bounty.new(object)
+    found = object.map{|hash| Bounty.new(hash)}
+    return found
   end
 
   def Bounty.load
